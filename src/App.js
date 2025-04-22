@@ -1,11 +1,15 @@
 // Minimal Frontend for Spotify Queue Web App (React)
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function App() {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+  }, []);
 
   const handleSearch = async () => {
     if (!search.trim()) return;
