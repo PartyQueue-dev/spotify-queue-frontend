@@ -1,26 +1,24 @@
 // Minimal Frontend for Spotify Queue Web App (React)
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+
+const API_URL = 'https://spotify-queue-server.onrender.com';
 
 export default function App() {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
-  }, []);
-
   const handleSearch = async () => {
     if (!search.trim()) return;
     setMessage('');
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/search?query=${encodeURIComponent(search)}`);
+    const res = await fetch(`${API_URL}/api/search?query=${encodeURIComponent(search)}`);
     const data = await res.json();
     setResults(data.tracks);
   };
 
   const addToQueue = async (uri) => {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/queue`, {
+    const res = await fetch(`${API_URL}/api/queue`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ uri })
