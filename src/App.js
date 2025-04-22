@@ -1,3 +1,5 @@
+// Minimal Frontend for Spotify Queue Web App (React)
+
 import React, { useState } from 'react';
 
 export default function App() {
@@ -8,13 +10,13 @@ export default function App() {
   const handleSearch = async () => {
     if (!search.trim()) return;
     setMessage('');
-    const res = await fetch(`/api/search?query=${encodeURIComponent(search)}`);
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/search?query=${encodeURIComponent(search)}`);
     const data = await res.json();
     setResults(data.tracks);
   };
 
   const addToQueue = async (uri) => {
-    const res = await fetch('/api/queue', {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/queue`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ uri })
@@ -24,25 +26,30 @@ export default function App() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '2rem auto', textAlign: 'center' }}>
-      <h1>Request a Song</h1>
+    <div className="max-w-md mx-auto p-4 text-center">
+      <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
       <input
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search for a track..."
-        style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
+        placeholder="Search..."
+        className="border p-2 w-full mb-2"
       />
-      <button onClick={handleSearch}>Search</button>
-
+      <button onClick={handleSearch} className="bg-black text-white px-4 py-2 rounded mb-4">
+        Search
+      </button>
       {results.map((track) => (
-        <div key={track.uri} style={{ marginTop: 10, paddingBottom: 10, borderBottom: '1px solid #ddd' }}>
-          <div>{track.name} — <small>{track.artist}</small></div>
-          <button onClick={() => addToQueue(track.uri)}>Add to Queue</button>
+        <div key={track.uri} className="border-b py-2">
+          <div>{track.name} — <span className="text-gray-600 text-sm">{track.artist}</span></div>
+          <button
+            onClick={() => addToQueue(track.uri)}
+            className="text-green-600 text-sm mt-1"
+          >
+            Add to Queue
+          </button>
         </div>
       ))}
-
-      {message && <p style={{ marginTop: '1rem', color: 'green' }}>{message}</p>}
+      {message && <div className="mt-4 text-green-700">{message}</div>}
     </div>
   );
 }
