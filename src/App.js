@@ -1,3 +1,5 @@
+// File: src/App.js (Frontend)
+
 import React, { useState, useEffect } from 'react';
 
 const API_URL = 'https://spotify-queue-server.onrender.com';
@@ -12,7 +14,9 @@ export default function App() {
 
   useEffect(() => {
     fetchQueue();
-    const interval = setInterval(fetchQueue, 5000);
+    const interval = setInterval(() => {
+      fetchQueue();
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -60,7 +64,15 @@ export default function App() {
       const res = await fetch(`${API_URL}/api/queue-view`);
       const data = await res.json();
       setQueue(data.queue || []);
-      setNowPlaying(data.currently_playing || null);
+      if (data.currently_playing) {
+        setNowPlaying({
+          name: data.currently_playing.name,
+          artists: data.currently_playing.artists?.map(a => a.name) || [],
+          uri: data.currently_playing.uri
+        });
+      } else {
+        setNowPlaying(null);
+      }
       await fetchVotes();
     } catch (err) {
       console.error('Failed to fetch queue', err);
@@ -70,11 +82,12 @@ export default function App() {
   const upvote = async (uri) => {
     if (!localStorage.getItem(`voted_${uri}`)) {
       try {
-        await fetch(`${API_URL}/api/vote`, {
+        const res = await fetch(`${API_URL}/api/vote`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ uri })
         });
+        const data = await res.json();
         setVotes(prev => ({ ...prev, [uri]: (prev[uri] || 0) + 1 }));
         localStorage.setItem(`voted_${uri}`, 'true');
         setMessage('Vote recorded!');
@@ -89,7 +102,7 @@ export default function App() {
   };
 
   return (
-    <div className="grid grid-cols-12 gap-8 max-w-screen-xl mx-auto h-screen p-8">
+    <div className="grid grid-cols-12 gap-8 w-full min-h-screen p-8">
       {/* LEFT SIDE */}
       <div className="col-span-9 overflow-y-auto">
         <div className="text-center">
@@ -127,7 +140,7 @@ export default function App() {
             {nowPlaying && (
               <div className="mb-4">
                 <h3 className="font-semibold">Now Playing:</h3>
-                <div>{nowPlaying.name} — <span className="text-gray-600 text-sm">{nowPlaying.artists.map(a => a.name).join(', ')}</span></div>
+                <div>{nowPlaying.name} — <span className="text-gray-600 text-sm">{nowPlaying.artists.join(', ')}</span></div>
               </div>
             )}
             <hr className="my-4" />
@@ -136,15 +149,22 @@ export default function App() {
               <p className="text-gray-500">No songs in queue</p>
             ) : (
               queue.map((track, index) => (
-                <div key={index} className="border-b py-2 flex justify-between items-center">
-                  <div>
-                    {track.name} — <span className="text-gray-600 text-sm">{track.artists.map(a => a.name).join(', ')}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm">Votes: {votes[track.uri] || 0}</div>
-                    <button onClick={() => upvote(track.uri)} className="text-blue-600 text-xs">
-                      Upvote
-                    </button>
+                <div key={index} className="border-b py-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      {track.name} — <span className="text-gray-600 text-sm">{track.artists?.map(a => a.name).join(', ')}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm">
+                        Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
+                      </div>
+                      <button
+                        onClick={() => upvote(track.uri)}
+                        className="text-blue-600 text-xs mt-1"
+                      >
+                        Upvote
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
