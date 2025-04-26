@@ -13,7 +13,11 @@ export default function App() {
   const [votes, setVotes] = useState({});
 
   useEffect(() => {
-    fetchVotes();
+    fetchQueue();
+    const interval = setInterval(() => {
+      fetchQueue();
+    }, 10000); // every 10 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const fetchVotes = async () => {
@@ -48,6 +52,7 @@ export default function App() {
       });
       const data = await res.json();
       setMessage(data.message || 'Song added.');
+      await fetchQueue(); // instantly refresh after adding a song
     } catch (err) {
       console.error('Failed to add to queue:', err);
       setMessage('Error adding song to queue.');
@@ -86,6 +91,7 @@ export default function App() {
         setVotes(prev => ({ ...prev, [uri]: (prev[uri] || 0) + 1 }));
         localStorage.setItem(`voted_${uri}`, 'true');
         setMessage('Vote recorded!');
+        await fetchQueue(); // instantly refresh after voting
       } catch (err) {
         console.error('Failed to send vote', err);
         setMessage('Error sending vote.');
@@ -149,7 +155,7 @@ export default function App() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm">
-                      Votes: {votes[track.uri] || 0} {votes[track.uri] >= 2 ? '🔥' : ''}
+                      Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
                     </div>
                     <button
                       onClick={() => upvote(track.uri)}
