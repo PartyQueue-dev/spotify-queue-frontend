@@ -1,6 +1,6 @@
 // File: src/App.js (Frontend)
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const API_URL = 'https://spotify-queue-server.onrender.com';
 
@@ -10,6 +10,12 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [queue, setQueue] = useState([]);
   const [nowPlaying, setNowPlaying] = useState(null);
+  const [votes, setVotes] = useState({});
+
+  useEffect(() => {
+    const storedVotes = JSON.parse(localStorage.getItem('votes') || '{}');
+    setVotes(storedVotes);
+  }, []);
 
   const handleSearch = async () => {
     if (!search.trim()) return;
@@ -47,13 +53,27 @@ export default function App() {
       if (data.currently_playing) {
         setNowPlaying({
           name: data.currently_playing.name,
-          artists: data.currently_playing.artists?.map(a => a.name) || []
+          artists: data.currently_playing.artists?.map(a => a.name) || [],
+          uri: data.currently_playing.uri
         });
       } else {
         setNowPlaying(null);
       }
     } catch (err) {
       console.error('Failed to fetch queue', err);
+    }
+  };
+
+  const upvote = (uri) => {
+    const updatedVotes = { ...votes };
+    if (!updatedVotes[uri]) updatedVotes[uri] = 0;
+    if (!localStorage.getItem(`voted_${uri}`)) {
+      updatedVotes[uri] += 1;
+      localStorage.setItem('votes', JSON.stringify(updatedVotes));
+      localStorage.setItem(`voted_${uri}`, 'true');
+      setVotes(updatedVotes);
+    } else {
+      setMessage('You have already voted for this song.');
     }
   };
 
@@ -105,7 +125,22 @@ export default function App() {
           ) : (
             queue.map((track, index) => (
               <div key={index} className="border-b py-2">
-                {track.name} — <span className="text-gray-600 text-sm">{track.artists?.map(a => a.name).join(', ')}</span>
+                <div className="flex justify-between items-center">
+                  <div>
+                    {track.name} — <span className="text-gray-600 text-sm">{track.artists?.map(a => a.name).join(', ')}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm">
+                      Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
+                    </div>
+                    <button
+                      onClick={() => upvote(track.uri)}
+                      className="text-blue-600 text-xs mt-1"
+                    >
+                      Upvote
+                    </button>
+                  </div>
+                </div>
               </div>
             ))
           )}
