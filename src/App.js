@@ -13,9 +13,18 @@ export default function App() {
   const [votes, setVotes] = useState({});
 
   useEffect(() => {
-    const storedVotes = JSON.parse(localStorage.getItem('votes') || '{}');
-    setVotes(storedVotes);
+    fetchVotes();
   }, []);
+
+  const fetchVotes = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/votes`);
+      const data = await res.json();
+      setVotes(data);
+    } catch (err) {
+      console.error('Failed to fetch votes', err);
+    }
+  };
 
   const handleSearch = async () => {
     if (!search.trim()) return;
@@ -59,19 +68,28 @@ export default function App() {
       } else {
         setNowPlaying(null);
       }
+      await fetchVotes();
     } catch (err) {
       console.error('Failed to fetch queue', err);
     }
   };
 
-  const upvote = (uri) => {
-    const updatedVotes = { ...votes };
-    if (!updatedVotes[uri]) updatedVotes[uri] = 0;
+  const upvote = async (uri) => {
     if (!localStorage.getItem(`voted_${uri}`)) {
-      updatedVotes[uri] += 1;
-      localStorage.setItem('votes', JSON.stringify(updatedVotes));
-      localStorage.setItem(`voted_${uri}`, 'true');
-      setVotes(updatedVotes);
+      try {
+        const res = await fetch(`${API_URL}/api/vote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uri })
+        });
+        const data = await res.json();
+        setVotes(prev => ({ ...prev, [uri]: (prev[uri] || 0) + 1 }));
+        localStorage.setItem(`voted_${uri}`, 'true');
+        setMessage('Vote recorded!');
+      } catch (err) {
+        console.error('Failed to send vote', err);
+        setMessage('Error sending vote.');
+      }
     } else {
       setMessage('You have already voted for this song.');
     }
