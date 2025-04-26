@@ -99,27 +99,59 @@ export default function App() {
     }
   };
 
-  // Using inline styles instead of Tailwind to ensure they work
+  // Detect mobile/small screens
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add resize listener
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
   const containerStyle = {
     display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
     width: '100%',
     height: '100vh',
     overflow: 'hidden'
   };
 
   const leftColumnStyle = {
-    flex: '1',
-    padding: '2rem',
+    flex: isMobile ? 'none' : '1',
+    height: isMobile ? 'calc(100vh - 200px)' : '100%',
+    padding: '1rem',
     overflowY: 'auto'
   };
 
   const rightColumnStyle = {
-    width: '400px',
+    width: isMobile ? '100%' : '300px',
+    height: isMobile ? '200px' : '100%',
     backgroundColor: '#f9fafb',
-    padding: '2rem',
+    padding: '1rem',
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+    flexDirection: isMobile ? 'row' : 'column',
+    alignItems: 'center',
+    justifyContent: isMobile ? 'space-around' : 'flex-start'
+  };
+
+  const qrImageStyle = {
+    width: isMobile ? '80px' : '150px',
+    height: isMobile ? '80px' : '150px',
+    marginBottom: isMobile ? '0' : '0.5rem'
+  };
+
+  const qrTextContainerStyle = {
+    maxWidth: isMobile ? '60%' : '100%',
+    textAlign: isMobile ? 'left' : 'center'
   };
 
   return (
@@ -200,11 +232,13 @@ export default function App() {
         </div>
       </div>
 
-      {/* RIGHT SIDE: QR Code - Fixed width */}
+      {/* RIGHT SIDE: QR Code - Responsive layout */}
       <div style={rightColumnStyle}>
-        <h2 style={{fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem'}}>Scan to Join In! 📷</h2>
-        <img src="/qr-code.png" alt="PartyQueue QR" style={{width: '12rem', height: '12rem', marginBottom: '0.5rem'}} />
-        <p style={{color: '#6b7280', textAlign: 'center'}}>Open your camera to request a song!</p>
+        <img src="/qr-code.png" alt="PartyQueue QR" style={qrImageStyle} />
+        <div style={qrTextContainerStyle}>
+          <h2 style={{fontSize: isMobile ? '1rem' : '1.5rem', fontWeight: 700, marginBottom: '0.5rem'}}>Scan to Join In! 📷</h2>
+          <p style={{color: '#6b7280', fontSize: isMobile ? '0.75rem' : '0.875rem'}}>Open your camera to request a song!</p>
+        </div>
       </div>
     </div>
   );
