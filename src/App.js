@@ -16,7 +16,7 @@ export default function App() {
     fetchQueue();
     const interval = setInterval(() => {
       fetchQueue();
-    }, 10000); // every 10 seconds
+    }, 5000); // every 5 seconds // every 10 seconds
     return () => clearInterval(interval);
   }, []);
 
