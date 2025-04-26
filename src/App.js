@@ -16,7 +16,7 @@ export default function App() {
     fetchQueue();
     const interval = setInterval(() => {
       fetchQueue();
-    }, 5000); // every 5 seconds // every 10 seconds
+    }, 5000); // every 5 seconds
     return () => clearInterval(interval);
   }, []);
 
@@ -102,8 +102,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row max-w-4xl mx-auto p-4 gap-8">
-
+    <div className="flex flex-col md:flex-row max-w-6xl mx-auto p-4 gap-8">
       <div className="flex-1 text-center">
         <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
         <input
@@ -128,6 +127,12 @@ export default function App() {
           </div>
         ))}
         {message && <div className="mt-4 text-green-700">{message}</div>}
+
+        <div className="text-center mt-8">
+          <h2 className="text-2xl font-bold mb-2">Scan to Join In! 📷</h2>
+          <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mx-auto" />
+          <p className="text-gray-500 mt-2">Open your camera or QR app to request a song!</p>
+        </div>
       </div>
 
       <div className="flex-1 text-center">
@@ -170,7 +175,6 @@ export default function App() {
           )}
         </div>
       </div>
-
     </div>
   );
 }
