@@ -103,77 +103,81 @@ export default function App() {
 
   return (
     <div className="flex flex-col md:flex-row max-w-6xl mx-auto p-4 gap-8">
-      <div className="flex-1 text-center">
-        <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search..."
-          className="border p-2 w-full mb-2"
-        />
-        <button onClick={handleSearch} className="bg-black text-white px-4 py-2 rounded mb-4">
-          Search
-        </button>
-        {results.map((track) => (
-          <div key={track.uri} className="border-b py-2">
-            <div>{track.name} — <span className="text-gray-600 text-sm">{track.artist}</span></div>
-            <button
-              onClick={() => addToQueue(track.uri)}
-              className="text-green-600 text-sm mt-1"
-            >
-              Add to Queue
-            </button>
-          </div>
-        ))}
-        {message && <div className="mt-4 text-green-700">{message}</div>}
+      {/* LEFT SIDE: Search + Queue */}
+      <div className="flex-1">
+        <div className="text-center">
+          <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search..."
+            className="border p-2 w-full mb-2"
+          />
+          <button onClick={handleSearch} className="bg-black text-white px-4 py-2 rounded mb-4">
+            Search
+          </button>
+          {results.map((track) => (
+            <div key={track.uri} className="border-b py-2">
+              <div>{track.name} — <span className="text-gray-600 text-sm">{track.artist}</span></div>
+              <button
+                onClick={() => addToQueue(track.uri)}
+                className="text-green-600 text-sm mt-1"
+              >
+                Add to Queue
+              </button>
+            </div>
+          ))}
+          {message && <div className="mt-4 text-green-700">{message}</div>}
+        </div>
 
         <div className="text-center mt-8">
-          <h2 className="text-2xl font-bold mb-2">Scan to Join In! 📷</h2>
-          <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mx-auto" />
-          <p className="text-gray-500 mt-2">Open your camera or QR app to request a song!</p>
+          <h2 className="text-lg font-semibold mb-4">Current Queue</h2>
+          <button onClick={fetchQueue} className="bg-gray-700 text-white px-4 py-2 rounded mb-4">
+            Refresh Queue
+          </button>
+          <div className="text-left mt-4">
+            {nowPlaying && (
+              <div className="mb-4">
+                <h3 className="font-semibold">Now Playing:</h3>
+                <div>{nowPlaying.name} — <span className="text-gray-600 text-sm">{nowPlaying.artists.join(', ')}</span></div>
+              </div>
+            )}
+            <hr className="my-4" />
+            <h3 className="font-semibold mb-2">Coming Up:</h3>
+            {queue.length === 0 ? (
+              <p className="text-gray-500">No songs in queue</p>
+            ) : (
+              queue.map((track, index) => (
+                <div key={index} className="border-b py-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      {track.name} — <span className="text-gray-600 text-sm">{track.artists?.map(a => a.name).join(', ')}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm">
+                        Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
+                      </div>
+                      <button
+                        onClick={() => upvote(track.uri)}
+                        className="text-blue-600 text-xs mt-1"
+                      >
+                        Upvote
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 text-center">
-        <h2 className="text-lg font-semibold mb-4">Current Queue</h2>
-        <button onClick={fetchQueue} className="bg-gray-700 text-white px-4 py-2 rounded mb-4">
-          Refresh Queue
-        </button>
-        <div className="text-left mt-4">
-          {nowPlaying && (
-            <div className="mb-4">
-              <h3 className="font-semibold">Now Playing:</h3>
-              <div>{nowPlaying.name} — <span className="text-gray-600 text-sm">{nowPlaying.artists.join(', ')}</span></div>
-            </div>
-          )}
-          <hr className="my-4" />
-          <h3 className="font-semibold mb-2">Coming Up:</h3>
-          {queue.length === 0 ? (
-            <p className="text-gray-500">No songs in queue</p>
-          ) : (
-            queue.map((track, index) => (
-              <div key={index} className="border-b py-2">
-                <div className="flex justify-between items-center">
-                  <div>
-                    {track.name} — <span className="text-gray-600 text-sm">{track.artists?.map(a => a.name).join(', ')}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm">
-                      Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
-                    </div>
-                    <button
-                      onClick={() => upvote(track.uri)}
-                      className="text-blue-600 text-xs mt-1"
-                    >
-                      Upvote
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+      {/* RIGHT SIDE: QR Code */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center">
+        <h2 className="text-2xl font-bold mb-4">Scan to Join In! 📷</h2>
+        <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-4" />
+        <p className="text-gray-500">Open your camera to request a song!</p>
       </div>
     </div>
   );
