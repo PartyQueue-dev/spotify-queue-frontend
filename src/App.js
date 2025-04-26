@@ -149,7 +149,7 @@ export default function App() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm">
-                      Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
+                      Votes: {votes[track.uri] || 0} {votes[track.uri] >= 2 ? '🔥' : ''}
                     </div>
                     <button
                       onClick={() => upvote(track.uri)}
