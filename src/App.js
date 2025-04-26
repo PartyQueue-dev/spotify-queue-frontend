@@ -102,9 +102,9 @@ export default function App() {
   };
 
   return (
-    <div className="grid grid-cols-12 gap-8 w-full min-h-screen p-8">
+    <div className="grid grid-cols-[1fr_400px] w-screen h-screen p-8 gap-8">
       {/* LEFT SIDE */}
-      <div className="col-span-9 overflow-y-auto">
+      <div className="overflow-y-auto">
         <div className="text-center">
           <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
           <input
@@ -174,7 +174,7 @@ export default function App() {
       </div>
 
       {/* RIGHT SIDE: QR Code */}
-      <div className="col-span-3 flex flex-col items-center justify-start pt-8">
+      <div className="flex flex-col items-center justify-start pt-8">
         <h2 className="text-2xl font-bold mb-4">Scan to Join In! 📷</h2>
         <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-2" />
         <p className="text-gray-500 text-center">Open your camera to request a song!</p>
