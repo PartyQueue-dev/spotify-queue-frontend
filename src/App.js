@@ -16,7 +16,7 @@ export default function App() {
     fetchQueue();
     const interval = setInterval(() => {
       fetchQueue();
-    }, 5000); // every 5 seconds
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -52,7 +52,7 @@ export default function App() {
       });
       const data = await res.json();
       setMessage(data.message || 'Song added.');
-      await fetchQueue(); // instantly refresh after adding a song
+      await fetchQueue();
     } catch (err) {
       console.error('Failed to add to queue:', err);
       setMessage('Error adding song to queue.');
@@ -91,7 +91,7 @@ export default function App() {
         setVotes(prev => ({ ...prev, [uri]: (prev[uri] || 0) + 1 }));
         localStorage.setItem(`voted_${uri}`, 'true');
         setMessage('Vote recorded!');
-        await fetchQueue(); // instantly refresh after voting
+        await fetchQueue();
       } catch (err) {
         console.error('Failed to send vote', err);
         setMessage('Error sending vote.');
@@ -102,9 +102,9 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row max-w-6xl mx-auto p-4 gap-8">
-      {/* LEFT SIDE: Search + Queue */}
-      <div className="flex-1">
+    <div className="flex flex-row flex-wrap max-w-6xl mx-auto p-4 gap-8">
+      {/* LEFT SIDE */}
+      <div className="flex-1 min-w-[300px]">
         <div className="text-center">
           <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
           <input
@@ -174,7 +174,7 @@ export default function App() {
       </div>
 
       {/* RIGHT SIDE: QR Code */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center">
+      <div className="flex-1 min-w-[300px] flex flex-col items-center justify-center text-center">
         <h2 className="text-2xl font-bold mb-4">Scan to Join In! 📷</h2>
         <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-4" />
         <p className="text-gray-500">Open your camera to request a song!</p>
