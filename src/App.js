@@ -1,5 +1,3 @@
-// File: src/App.js (Frontend)
-
 import React, { useState, useEffect } from 'react';
 
 const API_URL = 'https://spotify-queue-server.onrender.com';
@@ -102,9 +100,9 @@ export default function App() {
   };
 
   return (
-    <div className="grid grid-cols-[1fr_400px] w-screen h-screen p-8 gap-8">
-      {/* LEFT SIDE */}
-      <div className="overflow-y-auto">
+    <div className="flex w-full h-screen overflow-hidden">
+      {/* LEFT SIDE - Song Request */}
+      <div className="flex-1 p-8 overflow-y-auto">
         <div className="text-center">
           <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
           <input
@@ -173,8 +171,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* RIGHT SIDE: QR Code */}
-      <div className="flex flex-col items-center justify-start pt-8">
+      {/* RIGHT SIDE: QR Code - Fixed width */}
+      <div className="w-96 bg-gray-50 p-8 flex flex-col items-center justify-start">
         <h2 className="text-2xl font-bold mb-4">Scan to Join In! 📷</h2>
         <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-2" />
         <p className="text-gray-500 text-center">Open your camera to request a song!</p>
