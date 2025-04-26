@@ -102,9 +102,9 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-row w-full min-h-screen p-8 gap-12 justify-center items-start">
+    <div className="flex flex-row items-start justify-start w-full gap-8 p-8">
       {/* LEFT SIDE */}
-      <div className="flex-1 min-w-[300px]">
+      <div className="flex-grow">
         <div className="text-center">
           <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
           <input
@@ -174,10 +174,10 @@ export default function App() {
       </div>
 
       {/* RIGHT SIDE: QR Code */}
-      <div className="flex-1 min-w-[300px] flex flex-col items-center justify-center text-center">
+      <div className="w-80 flex flex-col items-center">
         <h2 className="text-2xl font-bold mb-4">Scan to Join In! 📷</h2>
-        <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-4" />
-        <p className="text-gray-500">Open your camera to request a song!</p>
+        <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-2" />
+        <p className="text-gray-500 text-center">Open your camera to request a song!</p>
       </div>
     </div>
   );
