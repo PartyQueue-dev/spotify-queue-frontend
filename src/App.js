@@ -102,7 +102,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-row flex-wrap max-w-6xl mx-auto p-4 gap-8">
+    <div className="flex flex-row w-full min-h-screen p-8 gap-12 justify-center items-start">
       {/* LEFT SIDE */}
       <div className="flex-1 min-w-[300px]">
         <div className="text-center">
