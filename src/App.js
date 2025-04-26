@@ -99,66 +99,95 @@ export default function App() {
     }
   };
 
+  // Using inline styles instead of Tailwind to ensure they work
+  const containerStyle = {
+    display: 'flex',
+    width: '100%',
+    height: '100vh',
+    overflow: 'hidden'
+  };
+
+  const leftColumnStyle = {
+    flex: '1',
+    padding: '2rem',
+    overflowY: 'auto'
+  };
+
+  const rightColumnStyle = {
+    width: '400px',
+    backgroundColor: '#f9fafb',
+    padding: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  };
+
   return (
-    <div className="flex w-full h-screen overflow-hidden">
+    <div style={containerStyle}>
       {/* LEFT SIDE - Song Request */}
-      <div className="flex-1 p-8 overflow-y-auto">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold mb-4">Request a Song</h1>
+      <div style={leftColumnStyle}>
+        <div style={{textAlign: 'center'}}>
+          <h1 style={{fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem'}}>Request a Song</h1>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
-            className="border p-2 w-full mb-2"
+            style={{border: '1px solid #ccc', padding: '0.5rem', width: '100%', marginBottom: '0.5rem'}}
           />
-          <button onClick={handleSearch} className="bg-black text-white px-4 py-2 rounded mb-4">
+          <button 
+            onClick={handleSearch} 
+            style={{backgroundColor: 'black', color: 'white', padding: '0.5rem 1rem', borderRadius: '0.25rem', marginBottom: '1rem'}}
+          >
             Search
           </button>
           {results.map((track) => (
-            <div key={track.uri} className="border-b py-2">
-              <div>{track.name} — <span className="text-gray-600 text-sm">{track.artist}</span></div>
+            <div key={track.uri} style={{borderBottom: '1px solid #eee', padding: '0.5rem 0'}}>
+              <div>{track.name} — <span style={{color: '#666', fontSize: '0.875rem'}}>{track.artist}</span></div>
               <button
                 onClick={() => addToQueue(track.uri)}
-                className="text-green-600 text-sm mt-1"
+                style={{color: 'green', fontSize: '0.875rem', marginTop: '0.25rem'}}
               >
                 Add to Queue
               </button>
             </div>
           ))}
-          {message && <div className="mt-4 text-green-700">{message}</div>}
+          {message && <div style={{marginTop: '1rem', color: 'green'}}>{message}</div>}
         </div>
 
-        <div className="text-center mt-8">
-          <h2 className="text-lg font-semibold mb-4">Current Queue</h2>
-          <button onClick={fetchQueue} className="bg-gray-700 text-white px-4 py-2 rounded mb-4">
+        <div style={{textAlign: 'center', marginTop: '2rem'}}>
+          <h2 style={{fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem'}}>Current Queue</h2>
+          <button 
+            onClick={fetchQueue} 
+            style={{backgroundColor: '#4b5563', color: 'white', padding: '0.5rem 1rem', borderRadius: '0.25rem', marginBottom: '1rem'}}
+          >
             Refresh Queue
           </button>
-          <div className="text-left mt-4">
+          <div style={{textAlign: 'left', marginTop: '1rem'}}>
             {nowPlaying && (
-              <div className="mb-4">
-                <h3 className="font-semibold">Now Playing:</h3>
-                <div>{nowPlaying.name} — <span className="text-gray-600 text-sm">{nowPlaying.artists.join(', ')}</span></div>
+              <div style={{marginBottom: '1rem'}}>
+                <h3 style={{fontWeight: 600}}>Now Playing:</h3>
+                <div>{nowPlaying.name} — <span style={{color: '#666', fontSize: '0.875rem'}}>{nowPlaying.artists.join(', ')}</span></div>
               </div>
             )}
-            <hr className="my-4" />
-            <h3 className="font-semibold mb-2">Coming Up:</h3>
+            <hr style={{margin: '1rem 0'}} />
+            <h3 style={{fontWeight: 600, marginBottom: '0.5rem'}}>Coming Up:</h3>
             {queue.length === 0 ? (
-              <p className="text-gray-500">No songs in queue</p>
+              <p style={{color: '#6b7280'}}>No songs in queue</p>
             ) : (
               queue.map((track, index) => (
-                <div key={index} className="border-b py-2">
-                  <div className="flex justify-between items-center">
+                <div key={index} style={{borderBottom: '1px solid #eee', padding: '0.5rem 0'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <div>
-                      {track.name} — <span className="text-gray-600 text-sm">{track.artists?.map(a => a.name).join(', ')}</span>
+                      {track.name} — <span style={{color: '#666', fontSize: '0.875rem'}}>{track.artists?.map(a => a.name).join(', ')}</span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm">
+                    <div style={{textAlign: 'right'}}>
+                      <div style={{fontSize: '0.875rem'}}>
                         Votes: {votes[track.uri] || 0} {votes[track.uri] >= 5 ? '🔥' : ''}
                       </div>
                       <button
                         onClick={() => upvote(track.uri)}
-                        className="text-blue-600 text-xs mt-1"
+                        style={{color: 'blue', fontSize: '0.75rem', marginTop: '0.25rem'}}
                       >
                         Upvote
                       </button>
@@ -172,10 +201,10 @@ export default function App() {
       </div>
 
       {/* RIGHT SIDE: QR Code - Fixed width */}
-      <div className="w-96 bg-gray-50 p-8 flex flex-col items-center justify-start">
-        <h2 className="text-2xl font-bold mb-4">Scan to Join In! 📷</h2>
-        <img src="/qr-code.png" alt="PartyQueue QR" className="w-48 h-48 mb-2" />
-        <p className="text-gray-500 text-center">Open your camera to request a song!</p>
+      <div style={rightColumnStyle}>
+        <h2 style={{fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem'}}>Scan to Join In! 📷</h2>
+        <img src="/qr-code.png" alt="PartyQueue QR" style={{width: '12rem', height: '12rem', marginBottom: '0.5rem'}} />
+        <p style={{color: '#6b7280', textAlign: 'center'}}>Open your camera to request a song!</p>
       </div>
     </div>
   );
