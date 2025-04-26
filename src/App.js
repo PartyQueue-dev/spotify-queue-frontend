@@ -9,6 +9,7 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [message, setMessage] = useState('');
   const [queue, setQueue] = useState([]);
+  const [nowPlaying, setNowPlaying] = useState(null);
 
   const handleSearch = async () => {
     if (!search.trim()) return;
@@ -43,6 +44,14 @@ export default function App() {
       const res = await fetch(`${API_URL}/api/queue-view`);
       const data = await res.json();
       setQueue(data.queue || []);
+      if (data.currently_playing) {
+        setNowPlaying({
+          name: data.currently_playing.name,
+          artists: data.currently_playing.artists?.map(a => a.name) || []
+        });
+      } else {
+        setNowPlaying(null);
+      }
     } catch (err) {
       console.error('Failed to fetch queue', err);
     }
@@ -82,7 +91,15 @@ export default function App() {
         <button onClick={fetchQueue} className="bg-gray-700 text-white px-4 py-2 rounded mb-4">
           Refresh Queue
         </button>
-        <div>
+        <div className="text-left mt-4">
+          {nowPlaying && (
+            <div className="mb-4">
+              <h3 className="font-semibold">Now Playing:</h3>
+              <div>{nowPlaying.name} — <span className="text-gray-600 text-sm">{nowPlaying.artists.join(', ')}</span></div>
+            </div>
+          )}
+          <hr className="my-4" />
+          <h3 className="font-semibold mb-2">Coming Up:</h3>
           {queue.length === 0 ? (
             <p className="text-gray-500">No songs in queue</p>
           ) : (
